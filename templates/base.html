@@ -8,8 +8,9 @@
 </head>
 <body>
   <header>
-    <div class="container">
-      <h1><a href="/">{{ site_title or 'My Blog' }}</a></h1>
+    <div class="container" style="position:relative; display:flex; justify-content:center; align-items:center;">
+      <a href="/" style="position:absolute; left:0; text-decoration:none; padding:8px 12px;">Home</a>
+      <h1 style="margin:0;"><a href="/" style="text-decoration:none; color:inherit;">{{ site_title or 'ScvReady Blog.' }}</a></h1>
     </div>
   </header>
   <main class="container">
