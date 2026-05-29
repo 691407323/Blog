@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="post">
+  <h2>{{ post.title }}</h2>
+  <p class="post-meta">{{ post.date }}</p>
+  <div class="post-body">{{ content | safe }}</div>
+  <p><a href="/">← Back to home</a></p>
+</article>
+{% endblock %}

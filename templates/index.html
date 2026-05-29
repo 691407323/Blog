@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  <ul class="posts">
+  {% for p in posts %}
+    <li><a href="/posts/{{ p.slug }}.html">{{ p.title }}</a> <small>{{ p.date }}</small></li>
+  {% else %}
+    <li>No posts yet. Add markdown files to content/posts/</li>
+  {% endfor %}
+  </ul>
+</section>
+{% endblock %}
