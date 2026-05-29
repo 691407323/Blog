@@ -61,9 +61,14 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           rm -rf /tmp/target
           git clone https://x-access-token:${DEPLOY_TOKEN}@github.com/${TARGET_REPO}.git /tmp/target
+          git -C /tmp/target rm -rf . || true
+          SRC="${GITHUB_WORKSPACE}/${DIR}/_site"
+          if [ ! -d "$SRC" ]; then
+            echo "Built site not found at $SRC" >&2
+            exit 2
+          fi
+          cp -r "$SRC/." /tmp/target/
           cd /tmp/target
-          git rm -rf . || true
-          cp -r $DIR/_site/. .
           git add -A
           if git commit -m "Deploy: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"; then
             git push https://x-access-token:${DEPLOY_TOKEN}@github.com/${TARGET_REPO}.git HEAD:main
