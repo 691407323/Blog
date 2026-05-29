@@ -47,10 +47,26 @@ jobs:
           fi
           echo "blog.scvready.cc" > "$DIR/_site/CNAME"
 
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          publish_dir: ./_site
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          keep_files: false
+      - name: Deploy to user-site repo
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+          TARGET_REPO: 691407323/691407323.github.io
+        run: |
+          set -e
+          if [ -f build.py ]; then DIR=.; elif [ -f blog/build.py ]; then DIR=blog; else
+            echo "build.py not found" >&2
+            exit 2
+          fi
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          rm -rf /tmp/target
+          git clone https://x-access-token:${DEPLOY_TOKEN}@github.com/${TARGET_REPO}.git /tmp/target
+          cd /tmp/target
+          git rm -rf . || true
+          cp -r $DIR/_site/. .
+          git add -A
+          if git commit -m "Deploy: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"; then
+            git push https://x-access-token:${DEPLOY_TOKEN}@github.com/${TARGET_REPO}.git HEAD:main
+          else
+            echo "No changes to deploy"
+          fi
