@@ -30,17 +30,19 @@ def load_posts(dirpath):
 
 
 def build():
-    env = Environment(loader=FileSystemLoader('templates'))
-    out = Path('_site')
+    root = Path(__file__).resolve().parent
+    env = Environment(loader=FileSystemLoader(root / 'templates'))
+    out = root / '_site'
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
 
     # copy static
-    if Path('static').exists():
-        shutil.copytree('static', out / 'static')
+    static_dir = root / 'static'
+    if static_dir.exists():
+        shutil.copytree(static_dir, out / 'static')
 
-    posts = load_posts('content/posts')
+    posts = load_posts(root / 'content/posts')
 
     # render posts
     for p in posts:
