@@ -10,6 +10,7 @@ import shutil
 import frontmatter
 import markdown
 from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
 
 
 def load_posts(dirpath):
@@ -44,10 +45,14 @@ def build():
 
     posts = load_posts(root / 'content/posts')
 
+    # compute years for footer
+    start_year = 2026
+    current_year = datetime.now().year
+
     # render posts
     for p in posts:
         tpl = env.get_template('post.html')
-        html = tpl.render(post=p['meta'], content=p['content'], site_title='My Blog')
+        html = tpl.render(post=p['meta'], content=p['content'], site_title='My Blog', start_year=start_year, current_year=current_year)
         slug = p['meta'].get('slug') or p['meta'].get('title', '').lower().replace(' ', '-')
         dest = out / 'posts' / f"{slug}.html"
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -55,7 +60,7 @@ def build():
 
     # render index
     tpl = env.get_template('index.html')
-    index_html = tpl.render(posts=[{'title': p['meta']['title'], 'date': p['meta'].get('date', ''), 'slug': p['meta'].get('slug')} for p in posts], site_title='My Blog')
+    index_html = tpl.render(posts=[{'title': p['meta']['title'], 'date': p['meta'].get('date', ''), 'slug': p['meta'].get('slug')} for p in posts], site_title='My Blog', start_year=start_year, current_year=current_year)
     (out / 'index.html').write_text(index_html, encoding='utf-8')
 
     print('Built site -> _site/')
