@@ -36,6 +36,17 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           python build.py
 
+      - name: Add CNAME for custom domain
+        run: |
+          set -e
+          if [ -f build.py ]; then DIR=.;
+          elif [ -f blog/build.py ]; then DIR=blog;
+          else
+            echo "build.py not found" >&2
+            exit 2
+          fi
+          echo "blog.scvready.cc" > "$DIR/_site/CNAME"
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
