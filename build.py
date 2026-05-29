@@ -45,14 +45,15 @@ def build():
 
     posts = load_posts(root / 'content/posts')
 
-    # compute years for footer
-    start_year = 2026
+    # compute years for footer and site title
+    start_year = 2015
     current_year = datetime.now().year
+    site_title = 'ScvReady Blog.'
 
     # render posts
     for p in posts:
         tpl = env.get_template('post.html')
-        html = tpl.render(post=p['meta'], content=p['content'], site_title='My Blog', start_year=start_year, current_year=current_year)
+        html = tpl.render(post=p['meta'], content=p['content'], site_title=site_title, start_year=start_year, current_year=current_year)
         slug = p['meta'].get('slug') or p['meta'].get('title', '').lower().replace(' ', '-')
         dest = out / 'posts' / f"{slug}.html"
         dest.parent.mkdir(parents=True, exist_ok=True)
@@ -60,7 +61,7 @@ def build():
 
     # render index
     tpl = env.get_template('index.html')
-    index_html = tpl.render(posts=[{'title': p['meta']['title'], 'date': p['meta'].get('date', ''), 'slug': p['meta'].get('slug')} for p in posts], site_title='My Blog', start_year=start_year, current_year=current_year)
+    index_html = tpl.render(posts=[{'title': p['meta']['title'], 'date': p['meta'].get('date', ''), 'slug': p['meta'].get('slug')} for p in posts], site_title=site_title, start_year=start_year, current_year=current_year)
     (out / 'index.html').write_text(index_html, encoding='utf-8')
 
     print('Built site -> _site/')
