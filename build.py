@@ -7,6 +7,7 @@ Simple static blog builder:
 """
 from pathlib import Path
 import shutil
+import re
 import frontmatter
 import markdown
 from jinja2 import Environment, FileSystemLoader
@@ -25,6 +26,13 @@ def load_posts(dirpath):
         meta.setdefault('date', '')
         meta.setdefault('slug', meta.get('slug', md_file.stem))
         html = markdown.markdown(post.content, extensions=['fenced_code', 'toc', 'codehilite'])
+        # Post-process: add language-* class to <code> tags inside codehilite blocks
+        langs = re.findall(r'^```(\S+)', post.content, re.MULTILINE)
+        def _add_lang(m):
+            lang = langs.pop(0) if langs else ''
+            cls = f' class="language-{lang}"' if lang else ''
+            return m.group(1) + cls + '>'
+        html = re.sub(r'(<div class="codehilite"><pre><span></span><code)>', _add_lang, html)
         posts.append({'meta': meta, 'content': html, 'src': md_file})
     posts.sort(key=lambda x: x['meta'].get('date', ''), reverse=True)
     return posts
