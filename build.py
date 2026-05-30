@@ -56,7 +56,7 @@ def build():
     # compute years for footer and site title
     start_year = 2015
     current_year = datetime.now().year
-    site_title = 'ScvReady Blog.'
+    site_title = 'ScvReady Blog'
 
     # render posts
     for p in posts:
